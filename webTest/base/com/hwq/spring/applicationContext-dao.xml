@@ -1,0 +1,47 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd ">
+
+	<!-- 加载db.properties文件中的内容，db.properties文件中key命名要有一定的特殊规则 -->
+	<context:property-placeholder location="classpath:com/hwq/properties/db.properties" />
+	<!-- 配置数据源 ，c3p0 -->
+
+	<bean id="dataSource"  class="com.mchange.v2.c3p0.ComboPooledDataSource"    
+        destroy-method="close">
+		<property name="driverClass" value="${jdbc.driver}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="minPoolSize" value="${cfg.jdbc.minPoolSize}"/>
+		<property name="maxPoolSize" value="${cfg.jdbc.maxPoolSize}"/>
+		<property name="maxIdleTime" value="300"/>
+	</bean>
+	<!-- sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" lazy-init="false">
+		<!-- 数据库连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 加载hibernate的全局配置文件 -->
+		 <property name="configLocation" value="classpath:/com/hwq/spring/hibernate.cfg.xml" /> 
+	</bean>
+	<!-- 数据库操作模板 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+   	 <property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="baseDaoEntity" class="com.hwq.dao.BaseDaoEntity"></bean>
+	
+	<bean id="paraJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+</beans>

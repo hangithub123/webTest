@@ -1,0 +1,30 @@
+.send {
+    position:relative;
+    width:150px;
+    padding:6px 0 0 0;
+    height:35px;
+    background:#6db0c1;
+    border-radius:5px; /* 圆角 */
+    margin:0;
+}
+
+.send .right {
+    position:absolute;
+    top:5px;
+    right:-16px; /* 圆角的位置需要细心调试哦 */
+    width:0;
+    height:0;
+    font-size:0;
+    border:solid 8px;
+    border-color:#fff #fff #fff #6db0c1;
+}
+.send .left {
+    position:absolute;
+    top:5px;
+    right:150px; /* 圆角的位置需要细心调试哦 */
+    width:0;
+    height:0;
+    font-size:0;
+    border:solid 8px;
+    border-color:#fff #6db0c1 #fff #fff;
+}

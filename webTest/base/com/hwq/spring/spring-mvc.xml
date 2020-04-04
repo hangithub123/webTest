@@ -1,0 +1,78 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd ">
+
+	<!-- 引入基础注解扫描spring文件 -->
+	 <import resource="classpath:com/hwq/spring/applicationContext-dao.xml" />
+	<import resource="classpath:com/hwq/spring/applicationContext-transaction.xml" /> 
+	<!-- 注解驱动 --> 
+	<!-- 两者都要有，或都没有 -->
+	<mvc:annotation-driven ></mvc:annotation-driven><!-- 负责找到控制器@RequestMapping映射的方法 -->
+	<mvc:default-servlet-handler></mvc:default-servlet-handler><!-- 不是映射的请求则交给servlet处理 -->
+	<context:component-scan base-package="com.hwq"></context:component-scan>
+	<!-- fmc基础配置 -->
+	<bean id="freeMarkerConfigurer"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/ftl"></property>
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">1</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="datetime_format">yyyy-MM-dd</prop><!-- 时间格式化 -->
+				<prop key="date_format">yyyy-MM-dd</prop>
+				<prop key="number_format">#.##</prop>
+				<prop key="classic_compatible">true</prop>
+				<prop key="auto_import">com.hwq.uicomponent/baseDirective.ftl as hwq</prop>
+				<prop key="object_wrapper">freemarker.ext.beans.BeansWrapper</prop>
+			</props>
+		</property>
+	</bean>
+	 <!-- 配置视图解析器 -->
+	<bean id="freeMarkerViewResolver"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="cache" value="true" />
+		<property name="prefix" value="" /><!-- 上面已经配了，这里就不用配啦 -->
+		<property name="suffix" value=".ftl" />
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="allowSessionOverride" value="true" />
+		<property name="allowRequestOverride" value="true" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<property name="requestContextAttribute" value="request" />
+	</bean>
+	<bean id="prop" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+	   <!-- 这里是PropertiesFactoryBean类，它也有个locations属性，也是接收一个数组，跟上面一样 -->
+	   <property name="locations">
+	       <array>
+	          <value>classpath:com/hwq/properties/global.properties</value>
+	       </array>
+	   </property>
+	</bean>
+	<!-- 多部分文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="104857600" />
+		<property name="maxInMemorySize" value="4096" />
+		<property name="defaultEncoding" value="UTF-8"></property>
+	</bean>
+	<!--请求拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*.do"/>
+			<bean class="com.hwq.interceptors.MyRequestInterceptor">
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>
