@@ -1,4 +1,4 @@
 mysql:
   url: jdbc:mysql://localhost:3306/lagou?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
 test:
-  message: han004
+  message: han005
